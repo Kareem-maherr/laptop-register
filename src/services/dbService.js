@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'mongodb+srv://admin:admin@cluster0.vzedi.mongodb.net/';
 
 // Initialize database on module load
 // Removed initDB function as it's not needed with MongoDB backend
