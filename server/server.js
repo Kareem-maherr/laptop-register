@@ -11,11 +11,18 @@ const fs = require('fs');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// --- CORS Configuration ---
+// Replace this URL with your actual frontend domain (Netlify URL).
+app.use(cors({
+  origin: 'https://laptop-register.netlify.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Parse JSON bodies
 app.use(express.json());
 
-// MongoDB Connection
+// --- Connect to MongoDB ---
 const connectDB = async () => {
   try {
     if (!process.env.MONGODB_URI) {
@@ -33,18 +40,17 @@ const connectDB = async () => {
   }
 };
 
-// Connect to MongoDB
+// Initiate the DB connection
 connectDB();
 
-// Debug middleware to log requests
+// --- Debug middleware to log all incoming requests ---
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`, req.body);
   next();
 });
 
-// Routes
-
-// Employees
+// --- Employees Routes ---
+// GET all employees
 app.get('/api/employees', async (req, res) => {
   try {
     const employees = await Employee.find();
@@ -56,6 +62,7 @@ app.get('/api/employees', async (req, res) => {
   }
 });
 
+// POST add new employee
 app.post('/api/employees', async (req, res) => {
   try {
     console.log('Creating employee:', req.body);
@@ -69,7 +76,7 @@ app.post('/api/employees', async (req, res) => {
   }
 });
 
-// Delete employee and remove their device assignments
+// DELETE employee and remove their device assignments
 app.delete('/api/employees/:id', async (req, res) => {
   try {
     const employeeId = req.params.id;
@@ -92,7 +99,7 @@ app.delete('/api/employees/:id', async (req, res) => {
     const deletedAssignments = await Assignment.deleteMany({ employee: employeeId });
     console.log('Deleted assignments:', deletedAssignments);
 
-    // Delete the employee using findByIdAndDelete
+    // Delete the employee
     const deletedEmployee = await Employee.findByIdAndDelete(employeeId);
     if (!deletedEmployee) {
       console.log('Employee not found:', employeeId);
@@ -112,7 +119,8 @@ app.delete('/api/employees/:id', async (req, res) => {
   }
 });
 
-// Devices
+// --- Devices Routes ---
+// GET all devices
 app.get('/api/devices', async (req, res) => {
   try {
     const devices = await Device.find().populate('assignedTo');
@@ -124,6 +132,7 @@ app.get('/api/devices', async (req, res) => {
   }
 });
 
+// POST add new device
 app.post('/api/devices', async (req, res) => {
   try {
     console.log('Creating device:', req.body);
@@ -137,7 +146,7 @@ app.post('/api/devices', async (req, res) => {
   }
 });
 
-// Delete device and remove its assignments
+// DELETE device and remove its assignments
 app.delete('/api/devices/:id', async (req, res) => {
   try {
     const deviceId = req.params.id;
@@ -166,14 +175,14 @@ app.delete('/api/devices/:id', async (req, res) => {
   }
 });
 
-// Assignments
+// --- Assignments Routes ---
 app.post('/api/assignments', async (req, res) => {
   try {
     const { deviceId, employeeId } = req.body;
     console.log('Creating assignment:', { deviceId, employeeId });
     const timestamp = new Date().toISOString();
 
-    // Update device
+    // Update the device to reflect the assignment
     const updatedDevice = await Device.findByIdAndUpdate(
       deviceId,
       {
@@ -214,7 +223,7 @@ app.get('/api/assignments', async (req, res) => {
   }
 });
 
-// Generate assignment report
+// --- Generate Assignment Report ---
 app.post('/api/assignments/report', async (req, res) => {
   try {
     const { device, employee } = req.body;
@@ -324,6 +333,7 @@ app.post('/api/assignments/report', async (req, res) => {
   }
 });
 
+// --- Server Listen ---
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
