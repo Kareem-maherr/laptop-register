@@ -18,13 +18,17 @@ app.use(express.json());
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop-registration', {
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MongoDB connection string is not defined in environment variables');
+    }
+    
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error.message);
+    console.error('Error connecting to MongoDB Atlas:', error.message);
     process.exit(1);
   }
 };

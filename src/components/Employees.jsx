@@ -107,6 +107,12 @@ function Employees({ employees, onAddEmployee, onDeleteEmployee }) {
           </select>
           <input
             type="text"
+            placeholder="Role"
+            value={newEmployee.role}
+            onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
+          />
+          <input
+            type="text"
             placeholder="Description"
             value={newEmployee.description}
             onChange={(e) => setNewEmployee({ ...newEmployee, description: e.target.value })}
@@ -125,6 +131,7 @@ function Employees({ employees, onAddEmployee, onDeleteEmployee }) {
                 <TableCell>Name</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Description</TableCell>
+                <TableCell>Role</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -139,6 +146,7 @@ function Employees({ employees, onAddEmployee, onDeleteEmployee }) {
                   </TableCell>
                   <TableCell>{employee.name}</TableCell>
                   <TableCell>{employee.status}</TableCell>
+                  <TableCell>{employee.role}</TableCell>
                   <TableCell>{employee.description}</TableCell>
                   <TableCell>
                     <IconButton

@@ -6,6 +6,8 @@ import Employees from './components/Employees'
 import Assignments from './components/Assignments'
 import Navigation from './components/Navigation'
 import * as dbService from './services/dbService'
+import jsPDF from 'jspdf';
+
 
 function App() {
   const [laptops, setLaptops] = useState([])
@@ -79,8 +81,13 @@ function App() {
   const handleAssignment = async ({ laptopId, employeeId }) => {
     try {
       await dbService.assignDevice(laptopId, employeeId);
-      const updatedDevices = await dbService.getAllDevices();
+      // Refresh both devices and employees data
+      const [updatedDevices, updatedEmployees] = await Promise.all([
+        dbService.getAllDevices(),
+        dbService.getAllEmployees()
+      ]);
       setLaptops(updatedDevices);
+      setEmployees(updatedEmployees);
     } catch (error) {
       console.error('Error assigning device:', error);
       alert('Failed to assign device. Please try again.');
