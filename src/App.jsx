@@ -81,13 +81,8 @@ function App() {
   const handleAssignment = async ({ laptopId, employeeId }) => {
     try {
       await dbService.assignDevice(laptopId, employeeId);
-      // Refresh both devices and employees data
-      const [updatedDevices, updatedEmployees] = await Promise.all([
-        dbService.getAllDevices(),
-        dbService.getAllEmployees()
-      ]);
+      const updatedDevices = await dbService.getAllDevices();
       setLaptops(updatedDevices);
-      setEmployees(updatedEmployees);
     } catch (error) {
       console.error('Error assigning device:', error);
       alert('Failed to assign device. Please try again.');

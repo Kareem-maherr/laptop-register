@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+console.log('Using API URL:', API_URL);
 
 // Initialize database on module load
 // Removed initDB function as it's not needed with MongoDB backend

@@ -52,6 +52,8 @@ function Assignments({ laptops, employees, onAssign }) {
       device: null,
       employee: null
     });
+    // Refresh the page to show updated assignments
+    window.location.reload();
   };
 
   const formatDate = (dateString) => {
@@ -120,9 +122,7 @@ function Assignments({ laptops, employees, onAssign }) {
               {laptops
                 .filter(laptop => laptop.assignedTo)
                 .map((laptop) => {
-                  // assignedTo contains the full employee object
-                  const assignedEmployee = laptop.assignedTo;
-                  console.log('Assigned employee:', assignedEmployee, 'for laptop:', laptop);
+                  const employee = employees.find(e => e._id === laptop.assignedTo);
                   return (
                     <TableRow
                       key={laptop._id}
@@ -133,8 +133,8 @@ function Assignments({ laptops, employees, onAssign }) {
                       </TableCell>
                       <TableCell>{laptop.serialNumber}</TableCell>
                       <TableCell>{laptop.model}</TableCell>
-                      <TableCell>{assignedEmployee.name || 'Unknown'}</TableCell>
-                      <TableCell>{assignedEmployee.number || 'N/A'}</TableCell>
+                      <TableCell>{employee?.name || 'Unknown'}</TableCell>
+                      <TableCell>{employee?.number || 'N/A'}</TableCell>
                       <TableCell>{formatDate(laptop.assignedDate)}</TableCell>
                       <TableCell>{laptop.status}</TableCell>
                       <TableCell>
@@ -145,7 +145,7 @@ function Assignments({ laptops, employees, onAssign }) {
                             setReportDialog({
                               open: true,
                               device: laptop,
-                              employee: assignedEmployee
+                              employee: employee
                             });
                           }}
                         >
